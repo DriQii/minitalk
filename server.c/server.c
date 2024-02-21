@@ -38,6 +38,8 @@ void	ft_add_char(char c)
 	{
 		ft_putstr(str);
 		free(str);
+		str = NULL;
+		i = 0;
 	}
 }
 
