@@ -18,7 +18,7 @@ int	main(void)
 	while(1);
 	return(0);
 }
-void	ft_add_char(char c, siginfo_t *siginfo)
+void	ft_add_char(char c)
 {
 	static char	*str;
 	static int	i;
@@ -37,7 +37,7 @@ void	ft_add_char(char c, siginfo_t *siginfo)
 	if (c == 0)
 	{
 		ft_putstr(str);
-		kill(siginfo->si_pid, SIGUSR1);
+		free(str);
 	}
 }
 
@@ -56,8 +56,10 @@ void	ft_handler(int sig, siginfo_t *siginfo, void *s)
 		i++;
 	if(i == 8)
 	{
-		ft_add_char(bit, siginfo);
+		ft_add_char(bit);
 		i = 0;
 		bit = 0;
 	}
+	usleep(100);
+	kill(siginfo->si_pid, SIGUSR1);
 }

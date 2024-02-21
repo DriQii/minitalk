@@ -1,5 +1,7 @@
 #include "client.h"
 
+int	state;
+
 void	ft_putbit(char c, int pid)
 {
 	int 	i;
@@ -7,7 +9,8 @@ void	ft_putbit(char c, int pid)
 	i = 128;
 	while (i > 0)
 	{
-		usleep(200);
+		while (!state);
+		
 		if(c / i >= 1)
 		{
 			kill(pid, SIGUSR1);
@@ -16,6 +19,7 @@ void	ft_putbit(char c, int pid)
 		else
 			kill(pid, SIGUSR2);
 		i /= 2;
+		state = 0;
 	}
 }
 void	ft_handler(int	sig)
@@ -23,7 +27,7 @@ void	ft_handler(int	sig)
 	if(sig == SIGUSR1)
 	{
 		printf("Accuse de reception recu\n");
-		exit(0);
+		state = 1;
 	}
 }
 
@@ -33,6 +37,7 @@ int	main(int argc, char **argv)
 	int		i;
 	char	*str;
 
+	state = 1;
 	i = 0;
 	server_pid = ft_atoi(argv[1]);
 	str = argv[2];
@@ -42,6 +47,10 @@ int	main(int argc, char **argv)
 		ft_putbit(str[i], server_pid);
 		i++;
 	}
-	ft_putbit(str[i], server_pid);
-	while(1);
+	if(!str[i])
+	{
+		ft_putbit(str[i], server_pid);
+		exit(0);
+	}
+
 }
