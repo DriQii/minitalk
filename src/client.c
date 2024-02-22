@@ -1,4 +1,4 @@
-#include "client.h"
+#include "minitalk.h"
 
 int	state;
 
@@ -10,7 +10,7 @@ void	ft_putbit(char c, int pid)
 	while (i > 0)
 	{
 		while (!state);
-		
+        usleep(100);
 		if(c / i >= 1)
 		{
 			kill(pid, SIGUSR1);

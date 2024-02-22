@@ -1,7 +1,6 @@
-#include "server.h"
+#include "minitalk.h"
 
-
-void	ft_handler(int sig, siginfo_t *siginfo, void *s);
+void	ft_handler(int sig, siginfo_t *siginfo, void *str);
 
 int	main(void)
 {
@@ -9,8 +8,9 @@ int	main(void)
 	struct sigaction	sa;
 
 	sa.sa_sigaction = ft_handler;
+	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
+	
 	pid = (int)getpid();
 	ft_printf("PID = %d\n", pid);
 	sigaction(SIGUSR1, &sa, NULL);
@@ -43,12 +43,12 @@ void	ft_add_char(char c)
 	}
 }
 
-void	ft_handler(int sig, siginfo_t *siginfo, void *s)
+void	ft_handler(int sig, siginfo_t *siginfo, void *str)
 {
 	static int i;
 	static int bit;
 
-	(void)s;
+	(void)str;
 	if(sig == SIGUSR1)
 	{
 		bit = bit | 1 << (7 - i);
@@ -62,6 +62,6 @@ void	ft_handler(int sig, siginfo_t *siginfo, void *s)
 		i = 0;
 		bit = 0;
 	}
-	usleep(100);
+    usleep(100);
 	kill(siginfo->si_pid, SIGUSR1);
 }
