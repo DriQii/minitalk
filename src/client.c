@@ -1,17 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: evella <evella@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/22 16:26:04 by evella            #+#    #+#             */
+/*   Updated: 2024/02/22 16:32:42 by evella           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
-int	state;
+int	g_state;
 
 void	ft_putbit(char c, int pid)
 {
-	int 	i;
+	int	i;
 
 	i = 128;
 	while (i > 0)
 	{
-		while (!state);
-        usleep(100);
-		if(c / i >= 1)
+		while (!g_state)
+		{
+		}
+		usleep(100);
+		if (c / i >= 1)
 		{
 			kill(pid, SIGUSR1);
 			c = c % i;
@@ -19,15 +33,16 @@ void	ft_putbit(char c, int pid)
 		else
 			kill(pid, SIGUSR2);
 		i /= 2;
-		state = 0;
+		g_state = 0;
 	}
 }
-void	ft_handler(int	sig)
+
+void	ft_handler(int sig)
 {
-	if(sig == SIGUSR1)
+	if (sig == SIGUSR1)
 	{
 		printf("Accuse de reception recu\n");
-		state = 1;
+		g_state = 1;
 	}
 }
 
@@ -37,7 +52,7 @@ int	main(int argc, char **argv)
 	int		i;
 	char	*str;
 
-	state = 1;
+	g_state = 1;
 	i = 0;
 	server_pid = ft_atoi(argv[1]);
 	str = argv[2];
@@ -47,10 +62,9 @@ int	main(int argc, char **argv)
 		ft_putbit(str[i], server_pid);
 		i++;
 	}
-	if(!str[i])
+	if (!str[i])
 	{
 		ft_putbit(str[i], server_pid);
 		exit(0);
 	}
-
 }
