@@ -6,7 +6,7 @@
 /*   By: evella <evella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 16:26:04 by evella            #+#    #+#             */
-/*   Updated: 2024/02/22 16:32:42 by evella           ###   ########.fr       */
+/*   Updated: 2024/02/22 17:07:48 by evella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,13 @@
 
 int	g_state;
 
-void	ft_putbit(char c, int pid)
+void	ft_error(void)
+{
+	printf("WRONG PID\n");
+	exit(0);
+}
+
+void	ft_putbit(unsigned char c, int pid)
 {
 	int	i;
 
@@ -27,11 +33,13 @@ void	ft_putbit(char c, int pid)
 		usleep(100);
 		if (c / i >= 1)
 		{
-			kill(pid, SIGUSR1);
+			if (kill(pid, SIGUSR1) == -1)
+				ft_error();
 			c = c % i;
 		}
 		else
-			kill(pid, SIGUSR2);
+			if (kill(pid, SIGUSR2) == -1)
+				ft_error();
 		i /= 2;
 		g_state = 0;
 	}
@@ -41,21 +49,26 @@ void	ft_handler(int sig)
 {
 	if (sig == SIGUSR1)
 	{
-		printf("Accuse de reception recu\n");
+		printf("Acknowledgement received\n");
 		g_state = 1;
 	}
 }
 
 int	main(int argc, char **argv)
 {
-	int		server_pid;
-	int		i;
-	char	*str;
+	int				server_pid;
+	int				i;
+	unsigned char	*str;
 
+	if (argc != 3)
+	{
+		ft_printf("USAGE : ./client [SERVER PID] [STRING TO PASS]");
+		return (1);
+	}
 	g_state = 1;
 	i = 0;
 	server_pid = ft_atoi(argv[1]);
-	str = argv[2];
+	str = (unsigned char *)argv[2];
 	signal(SIGUSR1, ft_handler);
 	while (str[i])
 	{
