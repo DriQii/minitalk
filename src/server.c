@@ -76,6 +76,6 @@ void	ft_handler(int sig, siginfo_t *siginfo, void *str)
 		i = 0;
 		bit = 0;
 	}
-	usleep(100);
+	usleep(50);
 	kill(siginfo->si_pid, SIGUSR1);
 }

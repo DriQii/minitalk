@@ -30,7 +30,7 @@ void	ft_putbit(unsigned char c, int pid)
 		while (!g_state)
 		{
 		}
-		usleep(100);
+		usleep(50);
 		if (c / i >= 1)
 		{
 			if (kill(pid, SIGUSR1) == -1)
